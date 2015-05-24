@@ -10,12 +10,16 @@ from django.db.models import FieldDoesNotExist
 from django.db.models.fields import (DateTimeField, DateField,
                                      EmailField, TimeField)
 from django.utils import six, dateparse
-from django.utils.datastructures import SortedDict
 from django.core.serializers.json import DjangoJSONEncoder
 try:
     from django.utils.encoding import force_text
 except ImportError:
     from django.utils.encoding import force_unicode as force_text
+
+if django.VERSION > (1, 8,):
+    from collections import OrderedDict
+else:
+    from django.utils.datastructures import SortedDict as OrderedDict
 
 try:
     import importlib
@@ -201,7 +205,7 @@ def deserialize_instance(model, data):
 
 
 def set_form_field_order(form, fields_order):
-    if isinstance(form.fields, SortedDict):
+    if isinstance(form.fields, OrderedDict):
         form.fields.keyOrder = fields_order
     else:
         # Python 2.7+
